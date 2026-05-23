@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Bite — Skip The Wait</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= BACKGROUND WORLD (PARALLAX LAYERS) ================= -->
+  <div class="ambient-backdrop">
+    <!-- Layer 1: Distant Sky & Clouds (Deepest) -->
+    <div class="parallax-layer parallax-layer-sky" data-speed="0.15">
+      <canvas id="ambient-sky-canvas"></canvas>
+      <div class="neon-glow red-glow"></div>
+      <div class="neon-glow orange-glow"></div>
+    </div>
+    
+    <!-- Layer 2: Mid-ground Street-food Stalls & Neon Signs -->
+    <div class="parallax-layer parallax-layer-stalls" data-speed="0.4">
+      <!-- Detailed Japanese/Indian hybrid street food stalls with warm glowing windows -->
+      <div class="street-stall-backdrop">
+        <!-- Bright glowing window structures in stall drawings -->
+        <svg class="street-svg-backdrop" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,300 L800,300 L800,180 L760,180 L740,150 L680,150 L670,180 L620,180 L600,120 L520,120 L500,180 L440,180 L420,100 L320,100 L300,180 L240,180 L220,130 L150,130 L130,180 L0,180 Z" fill="#040508" />
+          <path d="M150,130 L160,90 L210,90 L220,130 Z M520,120 L530,70 L590,70 L600,120 Z" fill="#07090e" />
+          <!-- Sizzling Stall Kitchen window glows (Bright Warm Orange) -->
+          <rect x="165" y="100" width="38" height="22" rx="3" fill="#ffaa00" opacity="0.6" filter="blur(1px)" />
+          <rect x="540" y="80" width="42" height="32" rx="3" fill="#ff3c00" opacity="0.55" filter="blur(1.5px)" />
+          <!-- Silhouette of chef inside stall window -->
+          <path d="M180,122 C180,115 186,112 186,108 C186,106 182,106 182,105 C182,103 185,103 186,103 C189,103 189,108 190,111 C191,114 191,122 191,122 Z" fill="#000" opacity="0.8" />
+          <path d="M555,112 C555,104 563,100 563,95 C563,92 558,92 558,90 C558,88 562,88 564,88 C569,88 569,95 571,100 C573,104 573,112 573,112 Z" fill="#000" opacity="0.8" />
+        </svg>
+      </div>
+      <div class="background-neon-sign banner-neon-1">拉麺</div>
+      <div class="background-neon-sign banner-neon-2">屋台</div>
+      <div class="background-neon-sign banner-neon-3">HOT GRILL</div>
+      <div class="scooter-silhouette" id="bg-scooter"></div>
+    </div>
+
+    <!-- Layer 3: Foreground Swaying Lanterns & Wires (Closest to viewer) -->
+    <div class="parallax-layer parallax-layer-foreground" data-speed="0.85">
+      <div class="hanging-wires"></div>
+      
+      <!-- Swaying Chinese/Japanese Lanterns -->
+      <div class="hanging-lantern lantern-1">
+        <div class="lantern-body">
+          <div class="lantern-light"></div>
+          <div class="lantern-text">R</div>
+        </div>
+        <div class="lantern-tassel"></div>
+      </div>
+      
+      <div class="hanging-lantern lantern-2">
+        <div class="lantern-body">
+          <div class="lantern-light"></div>
+          <div class="lantern-text">B</div>
+        </div>
+        <div class="lantern-tassel"></div>
+      </div>
+    </div>
+
+    <!-- Ambient weather canvas overlaying the entire background -->
+    <canvas id="ambient-rain-canvas"></canvas>
+  </div>
+
+  <!-- ================= INTEGRATED MOVIE-POSTER TYPOGRAPHY ================= -->
+  <!-- Left Side: Emotional Cinematic Caption -->
+  <div class="cinematic-poster-caption" id="poster-caption-container">
+    <div class="caption-line-1" id="caption-text-main">CRAVINGS MOVE FASTER HERE.</div>
+    <div class="caption-line-2" id="caption-text-sub">SKIP THE WAIT.</div>
+  </div>
+
+  <!-- Right Side: Movie Credits Block -->
+  <div class="cinematic-poster-credits">
+    <div class="credits-eyebrow">QUICK BITE DIRECTORS CUT</div>
+    <div class="credits-sub">A LATE-NIGHT CINEMATIC CRAVING EXPERIENCE</div>
+    <div class="credits-stamp">ESTABLISHED 2026</div>
+  </div>
+
+  <!-- ================= HEAVILY BLURRED FOREGROUND LANTERNS (FRAMING) ================= -->
+  <div class="foreground-lantern-wrapper lantern-left" data-speed="1.2">
+    <div class="foreground-lantern-body">
+      <div class="foreground-lantern-glow"></div>
+    </div>
+  </div>
+  
+  <div class="foreground-lantern-wrapper lantern-right" data-speed="1.25">
+    <div class="foreground-lantern-body">
+      <div class="foreground-lantern-glow"></div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN DEVICE WRAPPER ================= -->
+  <div class="device-perspective-wrapper">
+    <!-- Leak canvas just behind/over the phone bezel to emit screen smoke -->
+    <canvas id="phone-smoke-canvas"></canvas>
+    
+    <div class="phone-container" id="interactive-phone">
+      <div class="phone-bezel">
+        <div class="phone-speaker"></div>
+        <div class="phone-camera"></div>
+      </div>
+      
+      <!-- Audio Control Toggle -->
+      <button class="sound-toggle" id="btn-sound-toggle" aria-label="Toggle Sound">
+        <svg class="icon-sound-on" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z" />
+        </svg>
+        <svg class="icon-sound-off hidden" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.44 16.63,19.78 17.68,18.95L20.73,22L22,20.73L4.27,3M19,12C19,12.9 18.84,13.75 18.57,14.54L20.12,16.1C20.68,14.84 21,13.46 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,11.38 16.32,10.82 16,10.32L13.88,8.2M14,7.97C14.5,8.45 15,9.21 15,10V10.18L13.88,9.06" />
+        </svg>
+      </button>
+
+      <div class="phone-screen" id="app-screen-container">
+        
+        <!-- Physical diagonal glass shine overlay -->
+        <div class="phone-screen-shine" id="phone-screen-shine-element"></div>
+
+        <!-- 1. OPENING SCREEN -->
+        <section id="screen-opening" class="screen active">
+          <!-- Interactive rain & particle effects -->
+          <canvas id="opening-canvas"></canvas>
+          <div class="opening-street-silhouette"></div>
+          
+          <div class="opening-content">
+            <div class="app-logo">QUICK BITE</div>
+            
+            <div class="cinematic-headline-container">
+              <span class="word-eyebrow">SKIP THE WAIT</span>
+              <h1 class="poster-title">
+                SKIP<br>
+                THE<br>
+                <span class="highlight orange-glow">WAIT.</span>
+              </h1>
+            </div>
+            
+            <p class="opening-desc">A late-night animated food experience.</p>
+            
+            <button class="btn-craving" id="btn-start-craving">
+              <span class="btn-glow-layer"></span>
+              <span class="btn-text">Start Craving</span>
+              <svg class="btn-arrow" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. CINEMATIC LOADING SCREEN -->
+        <section id="screen-loading" class="screen">
+          <canvas id="loading-canvas"></canvas>
+          <div class="loading-content">
+            <!-- Animated kitchen silhouette SVG -->
+            <div class="cooking-silhouette-container">
+              <svg class="cooking-svg" viewBox="0 0 100 100">
+                <defs>
+                  <linearGradient id="fire-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ff9d00" />
+                    <stop offset="100%" stop-color="#ff3c00" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <!-- Stove Base -->
+                <path d="M20,70 L80,70 L75,80 L25,80 Z" fill="#151922" stroke="#ff3c00" stroke-width="1.5" />
+                <!-- Sizzling fire -->
+                <g class="stove-flames">
+                  <path d="M30,70 Q35,50 40,70 Q45,45 50,70 Q55,50 60,70 Q65,40 70,70 Z" fill="url(#fire-grad)" />
+                </g>
+                <!-- Pan flipping -->
+                <g class="wok-animation">
+                  <path d="M25,58 C35,63 65,63 75,58 L77,61 C67,67 33,67 23,61 Z" fill="#2c3540" />
+                  <path d="M75,59 L90,52" stroke="#2c3540" stroke-width="2.5" stroke-linecap="round" />
+                  <path class="noodles-toss" d="M35,48 Q40,30 48,45 T60,35 Q65,48 55,48" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" />
+                  <circle class="ingredient-toss-1" cx="32" cy="40" r="2" fill="#ff4d00" />
+                  <circle class="ingredient-toss-2" cx="62" cy="43" r="2.5" fill="#4caf50" />
+                  <path class="ingredient-toss-3" d="M48,35 L52,38" stroke="#ffffff" stroke-width="1.5" />
+                </g>
+              </svg>
+            </div>
+            
+            <div class="loading-bar-container">
+              <div class="loading-progress" id="loading-progress-bar"></div>
+            </div>
+            <h3 class="loading-status" id="loading-status-text">Preparing your experience...</h3>
+            <p class="loading-subtext">Assembling the ingredients</p>
+          </div>
+        </section>
+
+        <!-- 3. RESTAURANT SELECTION SCREEN -->
+        <section id="screen-restaurants" class="screen">
+          <canvas id="restaurants-canvas"></canvas>
+          <div class="restaurants-header">
+            <div class="brand-text">QUICK BITE</div>
+            <h2>THE REALMS</h2>
+            <p class="sub-heading">Swipe to enter a world of craving</p>
+          </div>
+
+          <!-- Horizontal Restaurant Cards Swipe View -->
+          <div class="restaurant-cards-viewport" id="restaurant-cards-container">
+            
+            <!-- Card 1: Ramen Alley -->
+            <div class="restaurant-card" data-restaurant="ramen">
+              <div class="card-bg-wrapper">
+                <div class="card-bg" style="background-image: url('assets/ramen_alley_bg.png');"></div>
+                <div class="card-fog-overlay"></div>
+                <canvas class="card-steam-canvas"></canvas>
+              </div>
+              <div class="card-neon-sign red-neon">らーめん</div>
+              <div class="card-content">
+                <span class="realm-tag">Noodle Realm</span>
+                <h3>Ramen Alley</h3>
+                <p class="card-flavor-text">Neon-bathed broths with late-night steam & soft noodles.</p>
+                <div class="card-stats">
+                  <span>12 min wait</span>
+                  <span>•</span>
+                  <span>Moody Broth</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Biryani Hearth -->
+            <div class="restaurant-card" data-restaurant="biryani">
+              <div class="card-bg-wrapper">
+                <div class="card-bg" style="background-image: url('assets/biryani_hearth_bg.png');"></div>
+                <div class="card-fog-overlay"></div>
+                <canvas class="card-steam-canvas"></canvas>
+              </div>
+              <div class="card-neon-sign orange-neon">दम बिरयानी</div>
+              <div class="card-content">
+                <span class="realm-tag">Clay Pot Realm</span>
+                <h3>Biryani Hearth</h3>
+                <p class="card-flavor-text">Slow-cooked spice secrets glowing inside copper flames.</p>
+                <div class="card-stats">
+                  <span>18 min wait</span>
+                  <span>•</span>
+                  <span>Copper Clay</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Neon Grill -->
+            <div class="restaurant-card" data-restaurant="grill">
+              <div class="card-bg-wrapper">
+                <div class="card-bg" style="background-image: url('assets/neon_grill_bg.png');"></div>
+                <div class="card-fog-overlay"></div>
+                <canvas class="card-steam-canvas"></canvas>
+              </div>
+              <div class="card-neon-sign grill-neon">GRILL</div>
+              <div class="card-content">
+                <span class="realm-tag">Sizzle Realm</span>
+                <h3>Neon Grill</h3>
+                <p class="card-flavor-text">Charcoal flame sear, flying sparks, and thick smoky ribs.</p>
+                <div class="card-stats">
+                  <span>15 min wait</span>
+                  <span>•</span>
+                  <span>Iron Grill</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4: Dim Sum Fog -->
+            <div class="restaurant-card" data-restaurant="dimsum">
+              <div class="card-bg-wrapper">
+                <div class="card-bg" style="background-image: url('assets/dim_sum_fog_bg.png');"></div>
+                <div class="card-fog-overlay"></div>
+                <canvas class="card-steam-canvas"></canvas>
+              </div>
+              <div class="card-neon-sign blue-neon">点心</div>
+              <div class="card-content">
+                <span class="realm-tag">Steamer Realm</span>
+                <h3>Dim Sum Fog</h3>
+                <p class="card-flavor-text">Drifting clouds revealing hot, translucent packets of joy.</p>
+                <div class="card-stats">
+                  <span>10 min wait</span>
+                  <span>•</span>
+                  <span>Mist Steam</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="swipe-indicator">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </section>
+
+        <!-- 4. FOOD MENU SCREEN -->
+        <section id="screen-menu" class="screen">
+          <div class="menu-hero-header">
+            <div class="menu-hero-bg" id="menu-hero-banner"></div>
+            <div class="menu-hero-gradient"></div>
+            <button class="btn-back" id="btn-menu-back">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M20,11H7.83L13.41,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z" />
+              </svg>
+            </button>
+            <div class="menu-header-info">
+              <span class="menu-realm-badge" id="menu-realm-title">Realm Title</span>
+              <h2 id="menu-restaurant-name">Restaurant Name</h2>
+            </div>
+          </div>
+
+          <div class="menu-items-scrollable">
+            <div class="menu-list" id="menu-items-container">
+              <!-- Populated via JavaScript dynamically -->
+            </div>
+          </div>
+
+          <!-- Floating Cart/Checkout Indicator -->
+          <div class="floating-cart-bar hidden" id="floating-cart">
+            <div class="cart-left">
+              <div class="cart-badge" id="cart-item-count">1</div>
+              <div class="cart-details">
+                <span class="cart-title">Your Feast</span>
+                <span class="cart-price" id="cart-total-price">$0.00</span>
+              </div>
+            </div>
+            <button class="btn-go-to-checkout" id="btn-trigger-checkout">
+              <span>Review Craving</span>
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- FOOD DETAIL VIEW (MODAL OVERLAY) -->
+        <div id="food-detail-modal" class="detail-modal">
+          <div class="modal-dim-overlay" id="modal-dim-close"></div>
+          <div class="modal-sheet">
+            <button class="modal-close" id="btn-modal-close">&times;</button>
+            
+            <!-- Layered Interactive Food Container -->
+            <div class="food-canvas-container">
+              <div class="food-glow-radial" id="food-glow-effect"></div>
+              <!-- Dynamic rising steam canvas -->
+              <canvas id="detail-steam-canvas"></canvas>
+              
+              <!-- Layered SVG Food Illustration representing 3D rotation -->
+              <div class="layered-food-wrapper" id="layered-food-renderer">
+                <!-- Loaded dynamically via JavaScript -->
+              </div>
+            </div>
+
+            <div class="modal-info">
+              <h3 id="detail-food-name">Neon Pork Ramen</h3>
+              <p class="modal-flavor-desc" id="detail-food-desc">Black garlic tonkotsu broth, hand-pulled noodles, charcoal-charred chashu pork, and soft-boiled neon eggs.</p>
+              
+              <!-- Customize Slider (Cinematic Heat/Spice Level) -->
+              <div class="spiciness-controller">
+                <div class="slider-label">
+                  <span>Spiciness / Ambient Heat</span>
+                  <span class="slider-val" id="heat-value">MILD GLOW</span>
+                </div>
+                <input type="range" min="1" max="100" value="20" class="heat-range-slider" id="spice-slider">
+                <div class="slider-ticks">
+                  <span>Warm</span>
+                  <span>Inferno</span>
+                  <span>Nova</span>
+                </div>
+              </div>
+
+              <div class="price-action-row">
+                <div class="detail-price-box">
+                  <span class="price-label">EST. COST</span>
+                  <span class="price-value" id="detail-food-price">$16.50</span>
+                </div>
+                <button class="btn-add-cart" id="btn-add-to-cart">
+                  <span class="btn-cart-glow"></span>
+                  <span>Add to Feast</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CHECKOUT SCREEN -->
+        <section id="screen-checkout" class="screen">
+          <canvas id="checkout-canvas"></canvas>
+          
+          <div class="checkout-header">
+            <button class="btn-back" id="btn-checkout-back">
+              <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M20,11H7.83L13.41,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z" />
+              </svg>
+            </button>
+            <h2>THE COVENANT</h2>
+          </div>
+
+          <div class="checkout-content">
+            <!-- Cinematic Ticket -->
+            <div class="covenant-ticket" id="checkout-ticket">
+              <div class="ticket-header">
+                <div class="ticket-brand">QUICK BITE</div>
+                <div class="ticket-seal">SKIP THE WAIT</div>
+              </div>
+              
+              <div class="ticket-divider"></div>
+              
+              <div class="ticket-items" id="checkout-items-list">
+                <!-- Populated by JS -->
+              </div>
+              
+              <div class="ticket-divider"></div>
+              
+              <div class="ticket-totals">
+                <div class="ticket-row">
+                  <span>Cooking Rite</span>
+                  <span>FREE</span>
+                </div>
+                <div class="ticket-row grand-total">
+                  <span>Sacrifice Total</span>
+                  <span id="checkout-total">$0.00</span>
+                </div>
+              </div>
+              
+              <div class="ticket-notes">
+                <p>Your arrival time is synchronized. The kitchen begins preparation based on your proximity. Do not delay your journey.</p>
+              </div>
+              
+              <div class="ticket-fringe"></div>
+            </div>
+            
+            <button class="btn-ignite-order" id="btn-ignite-order">
+              <span class="ignite-glow"></span>
+              <span class="btn-text">IGNITE ORDER</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 6. LIVE TRAVEL EXPERIENCE -->
+        <section id="screen-travel" class="screen">
+          <div class="travel-split-screen">
+            
+            <!-- Left Panel: Delivery Rider Journey -->
+            <div class="travel-left-pane">
+              <canvas id="travel-road-canvas"></canvas>
+              <div class="pane-overlay"></div>
+              <div class="scooter-sprite-wrapper">
+                <!-- Animated delivery scooter SVG -->
+                <svg class="scooter-svg" viewBox="0 0 100 100">
+                  <g class="scooter-bounce">
+                    <path d="M20,65 C20,55 35,50 50,50 L65,50 C75,50 80,55 80,65 L20,65 Z" fill="#ff3c00" />
+                    <rect x="50" y="38" width="22" height="12" fill="#151922" rx="2" />
+                    <path d="M45,50 L38,32 L60,32" stroke="#2c3540" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    <circle cx="38" cy="32" r="3" fill="#ffaa00" />
+                    <circle cx="32" cy="72" r="10" fill="#151922" stroke="#ffffff" stroke-width="2" />
+                    <circle cx="68" cy="72" r="10" fill="#151922" stroke="#ffffff" stroke-width="2" />
+                    <polygon points="20,62 0,55 0,72 20,68" fill="rgba(255, 170, 0, 0.3)" />
+                  </g>
+                  <circle class="exhaust-spark-1" cx="82" cy="62" r="1.5" fill="#ff5500" />
+                  <circle class="exhaust-spark-2" cx="88" cy="65" r="2.5" fill="#ffaa00" />
+                </svg>
+              </div>
+              <div class="travel-pane-label">YOUR JOURNEY</div>
+              <div class="travel-metric" id="travel-distance-metric">500m away</div>
+            </div>
+            
+            <!-- Right Panel: Kitchen Prep Journey -->
+            <div class="travel-right-pane">
+              <canvas id="travel-kitchen-canvas"></canvas>
+              <div class="pane-overlay"></div>
+              
+              <div class="kitchen-anim-container">
+                <!-- Kitchen SVG -->
+                <svg class="kitchen-live-svg" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="kitchen-fire" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#ff3c00" />
+                      <stop offset="100%" stop-color="#ffaa00" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <rect x="20" y="55" width="60" height="25" fill="#11151e" rx="3" />
+                  <g id="kitchen-stage-chop" class="kitchen-stage active">
+                    <rect x="30" y="48" width="40" height="7" fill="#8d6e63" rx="1" />
+                    <path d="M48,25 L55,42" stroke="#cfd8dc" stroke-width="3" stroke-linecap="round" class="knife-chop" />
+                    <rect x="42" y="44" width="8" height="4" fill="#4caf50" />
+                  </g>
+                  <g id="kitchen-stage-fire" class="kitchen-stage">
+                    <path d="M25,55 C35,52 65,52 75,55 L70,68 C55,72 45,72 30,68 Z" fill="#2c3540" />
+                    <path d="M35,55 Q50,30 65,55" fill="url(#kitchen-fire)" class="live-flame-burst" />
+                    <circle cx="45" cy="42" r="2" fill="#ff9800" />
+                    <circle cx="55" cy="38" r="3" fill="#ff5722" />
+                  </g>
+                  <g id="kitchen-stage-pack" class="kitchen-stage">
+                    <polygon points="35,68 65,68 70,45 30,45" fill="#d7ccc8" stroke="#8d6e63" stroke-width="1.5" />
+                    <path d="M45,45 Q50,35 55,45" fill="none" stroke="#8d6e63" stroke-width="2" />
+                    <rect x="42" y="52" width="16" height="10" fill="#ff3c00" rx="1" />
+                  </g>
+                </svg>
+              </div>
+              
+              <div class="travel-pane-label">KITCHEN STATUS</div>
+              <div class="travel-metric" id="travel-kitchen-metric">Chop & Dice</div>
+            </div>
+            
+          </div>
+
+          <!-- Sync Progress Bar Slider -->
+          <div class="travel-sync-bar">
+            <div class="progress-info">
+              <span id="sync-status-main">SYNCHRONIZING PATHS</span>
+              <span id="sync-percentage">0%</span>
+            </div>
+            <div class="sync-track">
+              <div class="sync-fill" id="sync-progress-fill"></div>
+              <div class="sync-handle" id="sync-progress-handle"></div>
+            </div>
+            <div class="sync-tip">Drag the progress bar to simulate traveling closer!</div>
+          </div>
+        </section>
+
+        <!-- 7. FINAL ARRIVAL MOMENT -->
+        <section id="screen-arrival" class="screen">
+          <canvas id="arrival-canvas"></canvas>
+          <div class="arrival-spotlight"></div>
+          
+          <div class="arrival-content">
+            <div class="arrival-reveal-container">
+              <div class="plate-glow"></div>
+              <div class="arrival-plate-wrapper" id="arrival-plate-display">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+            
+            <div class="arrival-text-group">
+              <span class="arrival-eyebrow">ORDER COMPLETE</span>
+              <h1 class="arrival-title">Right on time.</h1>
+              <p class="arrival-subtitle">Your food is hot, plated, and waiting for your bite. No delay, no chill.</p>
+            </div>
+            
+            <button class="btn-arrival-reset" id="btn-order-again">
+              <span class="btn-glow-layer"></span>
+              <span>Feast Again</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG Distortion Filter for Liquid / Smoke transitions -->
+  <svg class="hidden-svg-filters" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="screen-warp-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="displacement" />
+      </filter>
+      
+      <filter id="liquid-filter">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="sound.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
